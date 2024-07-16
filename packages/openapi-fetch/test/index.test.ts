@@ -767,6 +767,28 @@ describe("client", () => {
       expect(getRequestUrl().href).toBe(toAbsoluteURL("/self"));
     });
 
+    it("baseUrl (getter)", async () => {
+      let client = createClient<paths>({ baseUrl: () => baseUrl });
+
+      const { getRequestUrl } = useMockRequestHandler({
+        baseUrl,
+        method: "get",
+        path: "/self",
+        status: 200,
+        body: { message: "OK" },
+      });
+
+      await client.GET("/self");
+
+      // assert baseUrl and path mesh as expected
+      expect(getRequestUrl().href).toBe(toAbsoluteURL("/self"));
+
+      client = createClient<paths>({ baseUrl });
+      await client.GET("/self");
+      // assert trailing '/' was removed
+      expect(getRequestUrl().href).toBe(toAbsoluteURL("/self"));
+    });
+
     describe("headers", () => {
       it("persist", async () => {
         const headers: HeadersInit = { Authorization: "Bearer secrettoken" };

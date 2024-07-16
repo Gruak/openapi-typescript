@@ -13,7 +13,7 @@ import type {
 /** Options for each client instance */
 export interface ClientOptions extends Omit<RequestInit, "headers"> {
   /** set the common root URL for all API requests */
-  baseUrl?: string;
+  baseUrl?: string | (() => string);
   /** custom fetch (defaults to globalThis.fetch) */
   fetch?: (input: Request) => Promise<Response>;
   /** global querySerializer */

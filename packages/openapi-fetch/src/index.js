@@ -40,9 +40,10 @@ export default function createClient(clientOptions) {
     headers: baseHeaders,
     ...baseOptions
   } = { ...clientOptions };
-  if (baseUrl.endsWith("/")) {
-    baseUrl = baseUrl.substring(0, baseUrl.length - 1);
-  }
+  // const currentBaseUrl = typeof baseUrl === "function" ? baseUrl() : baseUrl;
+  // if (currentBaseUrl.endsWith("/")) {
+  //   currentBaseUrl = currentBaseUrl.substring(0, baseUrl.length - 1);
+  // }
   baseHeaders = mergeHeaders(DEFAULT_HEADERS, baseHeaders);
   const middlewares = [];
 
@@ -61,6 +62,8 @@ export default function createClient(clientOptions) {
       bodySerializer = globalBodySerializer ?? defaultBodySerializer,
       ...init
     } = fetchOptions || {};
+
+    const url = new URL(typeof baseUrl === "function" ? baseUrl() : baseUrl);
 
     let querySerializer =
       typeof globalQuerySerializer === "function"
@@ -92,14 +95,14 @@ export default function createClient(clientOptions) {
 
     let id;
     let options;
-    let request = new CustomRequest(createFinalURL(schemaPath, { baseUrl, params, querySerializer }), requestInit);
+    let request = new CustomRequest(createFinalURL(schemaPath, { baseUrl: url, params, querySerializer }), requestInit);
 
     if (middlewares.length) {
       id = randomID();
 
       // middleware (request)
       options = Object.freeze({
-        baseUrl,
+        baseUrl: url,
         fetch,
         parseAs,
         querySerializer,
