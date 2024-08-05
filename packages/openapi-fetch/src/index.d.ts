@@ -150,14 +150,15 @@ export interface Middleware {
 }
 
 /** This type helper makes the 2nd function param required if params/requestBody are required; otherwise, optional */
-export type MaybeOptionalInit<Params extends Record<HttpMethod, {}>, Location extends keyof Params> = HasRequiredKeys<
-  FetchOptions<FilterKeys<Params, Location>>
-> extends never
+export type MaybeOptionalInit<
+  Params extends Partial<Record<HttpMethod, {}>>,
+  Location extends keyof Params,
+> = HasRequiredKeys<FetchOptions<FilterKeys<Params, Location>>> extends never
   ? FetchOptions<FilterKeys<Params, Location>> | undefined
   : FetchOptions<FilterKeys<Params, Location>>;
 
 export type ClientMethod<
-  Paths extends Record<string, Record<HttpMethod, {}>>,
+  Paths extends Record<string, Partial<Record<HttpMethod, {}>>>,
   Method extends HttpMethod,
   Media extends MediaType,
 > = <Path extends PathsWithMethod<Paths, Method>, Init extends MaybeOptionalInit<Paths[Path], Method>>(

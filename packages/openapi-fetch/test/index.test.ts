@@ -5,6 +5,7 @@ import createClient, {
   type MiddlewareCallbackParams,
   type QuerySerializerOptions,
 } from "../src/index.js";
+import type { ClientMethod, MaybeOptionalInit } from "../src/index.d.ts";
 import { server, baseUrl, useMockRequestHandler, toAbsoluteURL } from "./fixtures/mock-server.js";
 import type { paths } from "./fixtures/api.js";
 
@@ -740,6 +741,13 @@ describe("client", () => {
             body: "",
           },
         });
+      });
+    });
+    describe("generic types", () => {
+      it("ClientMethod", () => {
+        // (no error)
+        type _GetMethod = ClientMethod<paths, "get", `${string}/${string}`>;
+        type _MaybeOptional = MaybeOptionalInit<paths["/comment"], "get">;
       });
     });
   });
